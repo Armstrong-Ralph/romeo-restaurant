@@ -1,0 +1,345 @@
+-<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROMEO Restaurant - Authentic Italian Cuisine</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <!-- ===== NAVIGATION BAR ===== -->
+    <!-- Fixed navigation bar with logo and menu items -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container-fluid">
+            <!-- Restaurant Logo/Brand -->
+            <a class="navbar-brand fw-bold" href="#home">
+                <i class="fas fa-utensils"></i> ROMEO
+            </a>
+            
+            <!-- Hamburger Menu Button (Mobile) -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <!-- Navigation Menu Items -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#menu">Menu</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact">Contact</a>
+                    </li>
+                </ul>
+                <!-- Book Table Button in Navigation -->
+                <a href="#contact" class="btn btn-danger ms-2">Book Table</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ===== HERO SECTION ===== -->
+    <!-- Full-width hero banner with welcome message and CTAs -->
+    <section id="home" class="hero-section">
+        <div class="hero-overlay"></div>
+        <img src="https://private-us-east-1.manuscdn.com/sessionFile/C3v5gLBYUBVQcv11jGo9Rg/sandbox/AXc9W4hADBujbwwybzy5IA-img-1_1771075802000_na1fn_cm9tZW8taGVyby1iYW5uZXI.png?x-oss-process=image/resize,w_1920,h_1920/format,webp/quality,q_80&Expires=1798761600&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvQzN2NWdMQllVQlZRY3YxMWpHbzlSZy9zYW5kYm94L0FYYzlXNGhBREJ1amJ3d3lienk1SUEtaW1nLTFfMTc3MTA3NTgwMjAwMF9uYTFmbl9jbTl0Wlc4dGFHVnlieTFpWVc1dVpYSS5wbmc~eC1vc3MtcHJvY2Vzcz1pbWFnZS9yZXNpemUsd18xOTIwLGhfMTkyMC9mb3JtYXQsd2VicC9xdWFsaXR5LHFfODAiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3OTg3NjE2MDB9fX1dfQ__&Key-Pair-Id=K2HSFNDJXOU9YS&Signature=RVnUTZTLGSIf6W5EkjharHO9b7fSA3tf~ZFp4za0lhJKmSvEmbRXgaAbjxfWcsvUzduFMdVd7ijYd1EfiY3CbWFvDvpJc3vS3pakOPdt5Y3q4j4TKV7PfQGXJmNt-o-pSaguGleZOYBil2jx~NnM3GismNn~jUuSsK1ZB8-t~TcsYxgvko2cBBRml1hzx44X5~OGkDPM5h6C001aUWKjPbF-SIaokD37v3XZpsNtYXoLy61Vk7r0HEbrJFK0nvQoRIywe0t2Oufw2Ak6weflM5FFLkECp-4SSWddhc78GtcY1EQjK4-R-PCBBryOD1FmLVuoHS70avM4181Vzza2wQ__" alt="ROMEO Restaurant Hero" class="hero-image">
+        <div class="hero-content">
+            <h1 class="hero-title">Welcome to ROMEO</h1>
+            <p class="hero-subtitle">Authentic Italian Cuisine Since 1995</p>
+            <div class="hero-buttons">
+                <!-- Order Now Button -->
+                <button class="btn btn-danger btn-lg me-2" id="orderBtn">
+                    <i class="fas fa-shopping-cart"></i> Order Now
+                </button>
+                <!-- View Menu Button -->
+                <a href="#menu" class="btn btn-outline-light btn-lg">
+                    <i class="fas fa-list"></i> View Menu
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== MENU SECTION ===== -->
+    <!-- Grid layout with food cards -->
+    <section id="menu" class="menu-section py-5">
+        <div class="container">
+            <!-- Section Header -->
+            <div class="text-center mb-5">
+                <h2 class="section-title">Our Menu</h2>
+                <p class="section-subtitle">Delicious Italian Dishes Await You</p>
+            </div>
+
+            <!-- Menu Cards Grid -->
+            <div class="row g-4">
+                <!-- Card 1: Pasta Carbonara -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="menu-card">
+                        <div class="menu-card-image">
+                            <img src="https://private-us-east-1.manuscdn.com/sessionFile/C3v5gLBYUBVQcv11jGo9Rg/sandbox/AXc9W4hADBujbwwybzy5IA-img-2_1771075795000_na1fn_cm9tZW8tbWVudS1wYXN0YQ.png?x-oss-process=image/resize,w_1920,h_1920/format,webp/quality,q_80&Expires=1798761600&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvQzN2NWdMQllVQlZRY3YxMWpHbzlSZy9zYW5kYm94L0FYYzlXNGhBREJ1amJ3d3lienk1SUEtaW1nLTJfMTc3MTA3NTc5NTAwMF9uYTFmbl9jbTl0Wlc4dGJXVnVkUzF3WVhOMFlRLnBuZz94LW9zcy1wcm9jZXNzPWltYWdlL3Jlc2l6ZSx3XzE5MjAsaF8xOTIwL2Zvcm1hdCx3ZWJwL3F1YWxpdHkscV84MCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc5ODc2MTYwMH19fV19&Key-Pair-Id=K2HSFNDJXOU9YS&Signature=boO3c3ZfOLUgF-5Y-eDerWUUEC0N96jaX8ZXlB3wp6uHiaFWIkVf4KhrnaPzBlAzaqJN~gL234z8DbuoeeGzv79zt5wDZ8SUZDoQgtVHS-hRAVPmYNDr2QqHP7ay5uDqGcF4X92MM4onj5Gnv~ogbc~xsfzCnhzMfyuGkXbgXlP4vP6Y-oxMcwa2TH2FYfJmn-vNGC156PjZK2sQodKe6s2xejpiJrqBcIotYyUOnIOqLY00Nk5qZw-dlHRPz4vznGTy--glIQugNeLy9Q~bqSA3FJ7msVJ8c7fyHoUDUCJzlOTXtwr5yI42sYZfvUd6y~5cuubM8oycpzVPNaou1Q__" alt="Pasta Carbonara" class="img-fluid">
+                        </div>
+                        <div class="menu-card-body">
+                            <h5 class="menu-card-title">Pasta Carbonara</h5>
+                            <p class="menu-card-price">$12.99</p>
+                            <p class="menu-card-description">Creamy pasta with guanciale, egg yolk, and Pecorino Romano cheese</p>
+                            <button class="btn btn-danger w-100 order-btn" data-dish="Pasta Carbonara">Order Now</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Margherita Pizza -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="menu-card">
+                        <div class="menu-card-image">
+                            <img src="https://private-us-east-1.manuscdn.com/sessionFile/C3v5gLBYUBVQcv11jGo9Rg/sandbox/AXc9W4hADBujbwwybzy5IA-img-3_1771075796000_na1fn_cm9tZW8tbWVudS1waXp6YQ.png?x-oss-process=image/resize,w_1920,h_1920/format,webp/quality,q_80&Expires=1798761600&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvQzN2NWdMQllVQlZRY3YxMWpHbzlSZy9zYW5kYm94L0FYYzlXNGhBREJ1amJ3d3lienk1SUEtaW1nLTNfMTc3MTA3NTc5NjAwMF9uYTFmbl9jbTl0Wlc4dGJXVnVkUzF3YVhwNllRLnBuZz94LW9zcy1wcm9jZXNzPWltYWdlL3Jlc2l6ZSx3XzE5MjAsaF8xOTIwL2Zvcm1hdCx3ZWJwL3F1YWxpdHkscV84MCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc5ODc2MTYwMH19fV19&Key-Pair-Id=K2HSFNDJXOU9YS&Signature=SPD3PO2N2ErH5ciLfxa5QH7QnSa67Oyd94d0TSgS4aghDfZ7So2bmS1K8DlOYJPRpYT0exh6e6o~h8hN6zp2iFhLOKRNc1oig7-4tbktR8NjDxr00-EL43F-WTtDqpktcVLpxVD-v6wJEJ8fMVrF9tdIWmbNPREMCID0Ie2xtSEPgratd3AsjFUjRlrDFAVXeCsPvS4WaWiF8tTJsiwN0xPKNbCFrL3251eyGyCZyFzGHgbVKlkp-AbQuu6HzAHrshbgJ97ktb9ZJ-aBX6wrHzI0Bd9AmqSHzsrtS3o8ldbddBy64fLJ8lGTVFCeogDXThvvN7Q51Lj9~PQ35MatZA__" alt="Margherita Pizza" class="img-fluid">
+                        </div>
+                        <div class="menu-card-body">
+                            <h5 class="menu-card-title">Margherita Pizza</h5>
+                            <p class="menu-card-price">$14.99</p>
+                            <p class="menu-card-description">Wood-fired pizza with fresh mozzarella, tomatoes, and basil</p>
+                            <button class="btn btn-danger w-100 order-btn" data-dish="Margherita Pizza">Order Now</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Saffron Risotto -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="menu-card">
+                        <div class="menu-card-image">
+                            <img src="https://private-us-east-1.manuscdn.com/sessionFile/C3v5gLBYUBVQcv11jGo9Rg/sandbox/AXc9W4hADBujbwwybzy5IA-img-4_1771075797000_na1fn_cm9tZW8tbWVudS1yaXNvdHRv.png?x-oss-process=image/resize,w_1920,h_1920/format,webp/quality,q_80&Expires=1798761600&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvQzN2NWdMQllVQlZRY3YxMWpHbzlSZy9zYW5kYm94L0FYYzlXNGhBREJ1amJ3d3lienk1SUEtaW1nLTRfMTc3MTA3NTc5NzAwMF9uYTFmbl9jbTl0Wlc4dGJXVnVkUzF5YVhOdmRIUnYucG5nP3gtb3NzLXByb2Nlc3M9aW1hZ2UvcmVzaXplLHdfMTkyMCxoXzE5MjAvZm9ybWF0LHdlYnAvcXVhbGl0eSxxXzgwIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzk4NzYxNjAwfX19XX0_&Key-Pair-Id=K2HSFNDJXOU9YS&Signature=cEpyUU9TQpjrBFldOK5jg-u-cF33q9dZe-G2epWqZg1dmZK7JEU6k3O~fiK60yt6GAHZ9yCBov9K36Li3jfwU-TmvHhsDHkPUd9PFFqG7Vq2jZxOMTupnPNVqipzKrLsbY-S3OyZdOmr5n8Jj62NDkV9qi5gltzwYrrBy5Q3PqW8BbqRqJsfYagkodWcpwHw8JWcFxygx76RrKqHBml4KS5SoD2grTL~~0XbbBIxlzjfwTdiLQzV8TXh4U6ozugnjmRpULPlSH77HJfGxrtNkvcQI7bSBWqXXQoZdFwG4qlUgJeKgPIV0vf79gk-OfBLE4rBFVHbn41qgNCZ~yr9kw__" alt="Saffron Risotto" class="img-fluid">
+                        </div>
+                        <div class="menu-card-body">
+                            <h5 class="menu-card-title">Saffron Risotto</h5>
+                            <p class="menu-card-price">$13.99</p>
+                            <p class="menu-card-description">Creamy risotto with saffron, white wine, and Parmesan</p>
+                            <button class="btn btn-danger w-100 order-btn" data-dish="Saffron Risotto">Order Now</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4: Caesar Salad -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="menu-card">
+                        <div class="menu-card-image">
+                            <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&h=500&fit=crop" alt="Caesar Salad" class="img-fluid">
+                        </div>
+                        <div class="menu-card-body">
+                            <h5 class="menu-card-title">Caesar Salad</h5>
+                            <p class="menu-card-price">$9.99</p>
+                            <p class="menu-card-description">Fresh romaine lettuce with house-made Caesar dressing and croutons</p>
+                            <button class="btn btn-danger w-100 order-btn" data-dish="Caesar Salad">Order Now</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 5: Tiramisu -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="menu-card">
+                        <div class="menu-card-image">
+                            <img src="https://images.unsplash.com/photo-1571115177098-24ec42ed204d?w=500&h=500&fit=crop" alt="Tiramisu" class="img-fluid">
+                        </div>
+                        <div class="menu-card-body">
+                            <h5 class="menu-card-title">Tiramisu</h5>
+                            <p class="menu-card-price">$7.99</p>
+                            <p class="menu-card-description">Classic Italian dessert with mascarpone, espresso, and cocoa</p>
+                            <button class="btn btn-danger w-100 order-btn" data-dish="Tiramisu">Order Now</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 6: Italian Wine -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="menu-card">
+                        <div class="menu-card-image">
+                            <img src="../images/italian-wine.jpg" alt="Wine Selection" class="img-fluid">
+                        </div>
+                        <div class="menu-card-body">
+                            <h5 class="menu-card-title">Italian Wine</h5>
+                            <p class="menu-card-price">$4.99+</p>
+                            <p class="menu-card-description">Selection of fine Italian wines from Tuscany and beyond</p>
+                            <button class="btn btn-danger w-100 order-btn" data-dish="Italian Wine">Order Now</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== ABOUT SECTION ===== -->
+    <!-- Two-column layout with restaurant story -->
+    <section id="about" class="about-section py-5">
+        <div class="container">
+            <div class="row align-items-center g-4">
+                <!-- About Image -->
+                <div class="col-md-6">
+                    <img src="https://private-us-east-1.manuscdn.com/sessionFile/C3v5gLBYUBVQcv11jGo9Rg/sandbox/AXc9W4hADBujbwwybzy5IA-img-5_1771075806000_na1fn_cm9tZW8tYWJvdXQtcmVzdGF1cmFudA.png?x-oss-process=image/resize,w_1920,h_1920/format,webp/quality,q_80&Expires=1798761600&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvQzN2NWdMQllVQlZRY3YxMWpHbzlSZy9zYW5kYm94L0FYYzlXNGhBREJ1amJ3d3lienk1SUEtaW1nLTVfMTc3MTA3NTgwNjAwMF9uYTFmbl9jbTl0Wlc4dFlXSnZkWFF0Y21WemRHRjFjbUZ1ZEEucG5nP3gtb3NzLXByb2Nlc3M9aW1hZ2UvcmVzaXplLHdfMTkyMCxoXzE5MjAvZm9ybWF0LHdlYnAvcXVhbGl0eSxxXzgwIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzk4NzYxNjAwfX19XX0_&Key-Pair-Id=K2HSFNDJXOU9YS&Signature=O7yD3xfsg9eabI-~Q9oBjpZ73K5CXUmQX6N2hFgk2ZXQSNvyEV52vYXryaTv7Ob-qBS8Aa-6DQ9Avht47P3Hk1q~ahdkCatFyyWLr7mSAidf4MEuz-gYJNGZGaf66UJ4mW5w46ayDB1oV0uNfBgQBUPfcott1qZVO7OdQqe35qR6RT6vr6SH-k~REf-yjpEK69vRJReZN-zDpZZWs5mkDbTE0wUWSU7Bcdh8G5CZZJq2z7IIcJoko36AsaePUkSVJVLW3R5q5hwA-f9r1E1chnP4TPB~zsIyceoj4GBkOfdGLIoJBciVTYhVw9xF1bYWC5aYmdUrwtOWt0qlxy0YKg__" alt="ROMEO Restaurant Interior" class="img-fluid rounded">
+                </div>
+
+                <!-- About Content -->
+                <div class="col-md-6">
+                    <h2 class="section-title">About ROMEO</h2>
+                    <p class="about-text">
+                        Founded in 1995, ROMEO Restaurant has been serving authentic Italian cuisine for over 25 years. Our commitment to quality, tradition, and excellence has made us a beloved destination for Italian food enthusiasts.
+                    </p>
+                    <p class="about-text">
+                        Every dish is prepared with the finest ingredients, sourced directly from Italy. Our chefs bring generations of culinary expertise to create an unforgettable dining experience that transports you to the heart of Italy.
+                    </p>
+                    <p class="about-text">
+                        Whether you're celebrating a special occasion or enjoying a casual dinner with family and friends, ROMEO offers the perfect ambiance and exceptional service.
+                    </p>
+                    <a href="#contact" class="btn btn-danger btn-lg mt-3">
+                        <i class="fas fa-calendar"></i> Reserve Your Table
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== CONTACT SECTION ===== -->
+    <!-- Contact form and restaurant information -->
+    <section id="contact" class="contact-section py-5">
+        <div class="container">
+            <!-- Section Header -->
+            <div class="text-center mb-5">
+                <h2 class="section-title">Contact Us</h2>
+                <p class="section-subtitle">Get in Touch or Make a Reservation</p>
+            </div>
+
+            <div class="row g-4">
+                <!-- Contact Form -->
+                <div class="col-lg-6">
+                    <form id="contactForm" class="contact-form">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control" id="phone" name="phone">
+                        </div>
+                        <div class="mb-3">
+                            <label for="date" class="form-label">Reservation Date</label>
+                            <input type="date" class="form-control" id="date" name="date">
+                        </div>
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Message</label>
+                            <textarea class="form-control" id="message" name="message" rows="4" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-danger btn-lg w-100">
+                            <i class="fas fa-paper-plane"></i> Send Message
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Contact Information -->
+                <div class="col-lg-6">
+                    <div class="contact-info">
+                        <div class="contact-item mb-4">
+                            <h5 class="contact-title">
+                                <i class="fas fa-map-marker-alt"></i> Address
+                            </h5>
+                            <p class="contact-detail">Babcock University<br>Ogun State, PMB 4003<br>Nigeria</p>
+                        </div>
+
+                        <div class="contact-item mb-4">
+                            <h5 class="contact-title">
+                                <i class="fas fa-phone"></i> Phone
+                            </h5>
+                            <p class="contact-detail">
+                                <a href="tel:+2347076864421">(707) 686-4421</a>
+                            </p>
+                        </div>
+
+                        <div class="contact-item mb-4">
+                            <h5 class="contact-title">
+                                <i class="fas fa-envelope"></i> Email
+                            </h5>
+                            <p class="contact-detail">
+                                <a href="mailto:info@romeorestaurant.com">info@romeorestaurant.com</a>
+                            </p>
+                        </div>
+
+                        <div class="contact-item mb-4">
+                            <h5 class="contact-title">
+                                <i class="fas fa-clock"></i> Hours
+                            </h5>
+                            <p class="contact-detail">
+                                Monday - Thursday: 11:00 AM - 10:00 PM<br>
+                                Friday - Saturday: 11:00 AM - 11:00 PM<br>
+                                Sunday: 12:00 PM - 9:00 PM
+                            </p>
+                        </div>
+
+                        <div class="contact-item">
+                            <h5 class="contact-title">
+                                <i class="fas fa-share-alt"></i> Follow Us
+                            </h5>
+                            <div class="social-links">
+                                <a href="#" class="social-link" title="Facebook">
+                                    <i class="fab fa-facebook-f"></i>
+                                </a>
+                                <a href="#" class="social-link" title="Twitter">
+                                    <i class="fab fa-twitter"></i>
+                                </a>
+                                <a href="#" class="social-link" title="Instagram">
+                                    <i class="fab fa-instagram"></i>
+                                </a>
+                                <a href="#" class="social-link" title="LinkedIn">
+                                    <i class="fab fa-linkedin-in"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <!-- Footer with copyright and links -->
+    <footer class="footer bg-dark text-light py-4">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                    <p class="mb-0">&copy; 2026 ROMEO Restaurant. All Rights Reserved.</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <a href="#home" class="footer-link me-3">Home</a>
+                    <a href="#menu" class="footer-link me-3">Menu</a>
+                    <a href="#about" class="footer-link me-3">About</a>
+                    <a href="#contact" class="footer-link">Contact</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script src="js/script.js"></script>
+</body>
+</html>
