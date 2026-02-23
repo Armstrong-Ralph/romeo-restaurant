@@ -120,24 +120,6 @@ function initializeEventListeners() {
     if (contactForm) {
         contactForm.addEventListener('submit', handleFormSubmit);
     }
-
-    // Add event listeners for "Order Now" buttons
-    document.querySelectorAll('.order-btn').forEach(button => {
-        button.addEventListener('click', function() {
-            const dishName = this.getAttribute('data-dish');
-            const priceText = this.previousElementSibling.previousElementSibling.textContent;
-            const price = parseFloat(priceText.replace('$', ''));
-            addToCart(dishName, price);
-        });
-    });
-
-    // Add event listener for Hero "Order Now" button
-    const heroOrderBtn = document.getElementById('orderBtn');
-    if (heroOrderBtn) {
-        heroOrderBtn.addEventListener('click', function() {
-            document.getElementById('menu').scrollIntoView({ behavior: 'smooth' });
-        });
-    }
 }
 
 /**
@@ -149,7 +131,7 @@ function handleLogin() {
     const rememberMe = document.getElementById('rememberMe').checked;
     
     if (!email || !password) {
-        alert('❌ Please enter both email and password.');
+        alert('âŒ Please enter both email and password.');
         return;
     }
     
@@ -157,13 +139,13 @@ function handleLogin() {
     const user = users.find(u => u.email === email);
     
     if (!user) {
-        alert('❌ Email not found. Please sign up first.');
+        alert('âŒ Email not found. Please sign up first.');
         return;
     }
     
     // Simple password validation (in production, use bcrypt)
     if (user.password !== password) {
-        alert('❌ Incorrect password. Please try again.');
+        alert('âŒ Incorrect password. Please try again.');
         return;
     }
     
@@ -189,7 +171,7 @@ function handleLogin() {
     const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
     if (loginModal) loginModal.hide();
     
-    alert(`✅ Welcome back, ${currentUser.name}!`);
+    alert(`âœ… Welcome back, ${currentUser.name}!`);
     
     // Reset form
     document.getElementById('loginForm').reset();
@@ -208,28 +190,28 @@ function handleSignup() {
     
     // Validation
     if (!name || !email || !phone || !password || !passwordConfirm) {
-        alert('❌ Please fill in all fields.');
+        alert('âŒ Please fill in all fields.');
         return;
     }
     
     if (password.length < 6) {
-        alert('❌ Password must be at least 6 characters long.');
+        alert('âŒ Password must be at least 6 characters long.');
         return;
     }
     
     if (password !== passwordConfirm) {
-        alert('❌ Passwords do not match.');
+        alert('âŒ Passwords do not match.');
         return;
     }
     
     if (!agreeTerms) {
-        alert('❌ Please agree to the Terms and Conditions.');
+        alert('âŒ Please agree to the Terms and Conditions.');
         return;
     }
     
     // Check if email already exists
     if (users.find(u => u.email === email)) {
-        alert('❌ Email already registered. Please login or use a different email.');
+        alert('âŒ Email already registered. Please login or use a different email.');
         return;
     }
     
@@ -262,7 +244,7 @@ function handleSignup() {
     const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
     if (loginModal) loginModal.hide();
     
-    alert(`✅ Account created successfully, ${name}! Welcome to ROMEO Restaurant!`);
+    alert(`âœ… Account created successfully, ${name}! Welcome to ROMEO Restaurant!`);
     
     // Reset form
     document.getElementById('signupForm').reset();
@@ -275,19 +257,19 @@ function handlePasswordReset() {
     const resetEmail = document.getElementById('resetEmail').value.trim();
     
     if (!resetEmail) {
-        alert('❌ Please enter your email address.');
+        alert('âŒ Please enter your email address.');
         return;
     }
     
     const user = users.find(u => u.email === resetEmail);
     
     if (!user) {
-        alert('❌ Email not found in our system.');
+        alert('âŒ Email not found in our system.');
         return;
     }
     
     // In production, send reset link via email
-    alert(`✅ Password reset link has been sent to ${resetEmail}. Please check your email.`);
+    alert(`âœ… Password reset link has been sent to ${resetEmail}. Please check your email.`);
     document.getElementById('passwordResetForm').reset();
 }
 
@@ -296,7 +278,7 @@ function handlePasswordReset() {
  */
 function loginWithGoogle() {
     // In production, integrate with Google OAuth
-    alert('🔑 Google login is coming soon! For now, please use email/password registration.');
+    alert('ðŸ” Google login is coming soon! For now, please use email/password registration.');
 }
 
 /**
@@ -304,7 +286,7 @@ function loginWithGoogle() {
  */
 function loginWithFacebook() {
     // In production, integrate with Facebook OAuth
-    alert('🔑 Facebook login is coming soon! For now, please use email/password registration.');
+    alert('ðŸ” Facebook login is coming soon! For now, please use email/password registration.');
 }
 
 /**
@@ -316,7 +298,7 @@ function handleLogout() {
         localStorage.removeItem('romeoCurrentUser');
         localStorage.removeItem('romeoRememberMe');
         updateAuthUI();
-        alert('✅ You have been logged out successfully.');
+        alert('âœ… You have been logged out successfully.');
     }
 }
 
@@ -424,10 +406,10 @@ function toggleFavoriteOrder(orderIndex) {
         favoriteOrders = favoriteOrders.filter(fav => 
             !(fav.date === order.date && fav.total === order.total)
         );
-        alert('❌ Removed from favorites');
+        alert('âŒ Removed from favorites');
     } else {
         favoriteOrders.push(order);
-        alert('❤️ Added to favorites');
+        alert('â¤ï¸ Added to favorites');
     }
     
     saveUserData();
@@ -450,62 +432,6 @@ function showAddresses() {
         addressesSection.style.display = 'block';
         renderAddresses();
     }
-}
-
-/**
- * Show favorites page
- */
-function showFavorites() {
-    if (!currentUser) {
-        alert('Please login first.');
-        return;
-    }
-    
-    const favoritesSection = document.getElementById('favoritesPage');
-    if (favoritesSection) {
-        favoritesSection.style.display = 'block';
-        renderFavorites();
-    }
-}
-
-/**
- * Render favorite orders
- */
-function renderFavorites() {
-    const favoritesContainer = document.getElementById('favoritesContainer');
-    if (!favoritesContainer) return;
-    
-    if (favoriteOrders.length === 0) {
-        favoritesContainer.innerHTML = '<p class="text-center text-muted">No favorite orders yet.</p>';
-        return;
-    }
-    
-    favoritesContainer.innerHTML = '';
-    favoriteOrders.forEach((order, index) => {
-        const orderDate = new Date(order.date).toLocaleDateString();
-        const orderHTML = `
-            <div class="card mb-3">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h6 class="card-title">Favorite Order #${index + 1}</h6>
-                            <p class="text-muted mb-1">Date: ${orderDate}</p>
-                            <p class="text-muted mb-1">Items: ${order.items.length}</p>
-                        </div>
-                        <div class="col-md-3">
-                            <p class="fw-bold">Total: $${order.total.toFixed(2)}</p>
-                        </div>
-                        <div class="col-md-3">
-                            <button class="btn btn-sm btn-danger" onclick="toggleFavoriteOrder(${index})">
-                                <i class="fas fa-trash"></i> Remove
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-        favoritesContainer.innerHTML += orderHTML;
-    });
 }
 
 /**
@@ -546,7 +472,7 @@ function renderAddresses() {
 /**
  * Add new address
  */
-function addNewAddress() {
+function addAddress() {
     const street = prompt('Enter street address:');
     if (!street) return;
     
@@ -574,7 +500,7 @@ function addNewAddress() {
     userAddresses.push(newAddress);
     saveUserData();
     renderAddresses();
-    alert('✅ Address added successfully!');
+    alert('âœ… Address added successfully!');
 }
 
 /**
@@ -596,7 +522,7 @@ function editAddress(index) {
     
     saveUserData();
     renderAddresses();
-    alert('✅ Address updated successfully!');
+    alert('âœ… Address updated successfully!');
 }
 
 /**
@@ -607,7 +533,7 @@ function deleteAddress(index) {
         userAddresses.splice(index, 1);
         saveUserData();
         renderAddresses();
-        alert('✅ Address deleted successfully!');
+        alert('âœ… Address deleted successfully!');
     }
 }
 
@@ -639,7 +565,7 @@ function addToCart(name, price) {
     const quantity = parseInt(prompt(`How many ${name} would you like?`, '1'));
     
     if (isNaN(quantity) || quantity < 1) {
-        alert('❌ Please enter a valid quantity.');
+        alert('âŒ Please enter a valid quantity.');
         return;
     }
     
@@ -656,7 +582,7 @@ function addToCart(name, price) {
     }
     
     saveCart();
-    alert(`✅ ${quantity} ${name}(s) added to cart!`);
+    alert(`âœ… ${quantity} ${name}(s) added to cart!`);
 }
 
 /**
@@ -699,7 +625,7 @@ function renderCartItems() {
                     </div>
                     <div class="col-md-3">
                         <div class="btn-group btn-group-sm" role="group">
-                            <button class="btn btn-outline-secondary" onclick="decreaseQuantity(${index})">−</button>
+                            <button class="btn btn-outline-secondary" onclick="decreaseQuantity(${index})">âˆ’</button>
                             <button class="btn btn-outline-secondary" disabled>${item.quantity}</button>
                             <button class="btn btn-outline-secondary" onclick="increaseQuantity(${index})">+</button>
                         </div>
@@ -757,16 +683,11 @@ function removeFromCart(index) {
  * Update cart UI (badge count)
  */
 function updateCartUI() {
-    const cartCount = document.getElementById('cartCount');
+    const cartBtn = document.getElementById('cartBtn');
     const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
     
-    if (cartCount) {
-        if (totalItems > 0) {
-            cartCount.textContent = totalItems;
-            cartCount.style.display = 'block';
-        } else {
-            cartCount.style.display = 'none';
-        }
+    if (cartBtn) {
+        cartBtn.textContent = totalItems;
     }
 }
 
@@ -815,7 +736,7 @@ function proceedToCheckout() {
     const cartModal = bootstrap.Modal.getInstance(document.getElementById('cartModal'));
     if (cartModal) cartModal.hide();
     
-    alert(`✅ Order placed successfully!\n\nTotal: $${total.toFixed(2)}\nDelivery to: ${deliveryAddress.street}, ${deliveryAddress.city}\n\nEstimated delivery: 30-45 minutes`);
+    alert(`âœ… Order placed successfully!\n\nTotal: $${total.toFixed(2)}\nDelivery to: ${deliveryAddress.street}, ${deliveryAddress.city}\n\nEstimated delivery: 30-45 minutes`);
 }
 
 // ===== CONTACT FORM =====
@@ -834,12 +755,12 @@ function handleFormSubmit(e) {
     
     // Validation
     if (!name || !email || !phone || !date || !message) {
-        alert('❌ Please fill in all fields.');
+        alert('âŒ Please fill in all fields.');
         return;
     }
     
     // In production, send this data to backend
-    alert(`✅ Thank you, ${name}! We've received your reservation request.\nWe'll confirm your booking at ${email} shortly.`);
+    alert(`âœ… Thank you, ${name}! We've received your reservation request.\nWe'll confirm your booking at ${email} shortly.`);
     
     // Reset form
     this.reset();
