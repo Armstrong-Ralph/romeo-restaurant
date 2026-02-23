@@ -1,7 +1,7 @@
-/**
- * ===== ROMEO RESTAURANT - JAVASCRIPT INTERACTIONS =====
+/*
+ * ===== ROMEO RESTAURANT - COMPLETE JAVASCRIPT INTERACTIONS =====
  * This file handles all JavaScript interactions for the restaurant website
- * including smooth scrolling, form validation, button interactions, and animations
+ * including OAuth authentication, user profiles, shopping cart, order history, addresses, and favorites
  */
 
 // ===== GLOBAL STATE =====
@@ -12,212 +12,793 @@ let userAddresses = [];
 let userOrders = [];
 let favoriteOrders = [];
 
-// ===== DOCUMENT READY =====
+// ===== INITIALIZATION =====
 document.addEventListener('DOMContentLoaded', function() {
+    loadAuthState();
+    loadCart();
+    loadUserData();
     initializeEventListeners();
     updateActiveNavLink();
+    updateAuthUI();
 });
 
 /**
- * Initialize all event listeners for the website
+ * Load authentication state from localStorage
+ */
+function loadAuthState() {
+    const savedUser = localStorage.getItem('romeoCurrentUser');
+    const savedUsers = localStorage.getItem('romeoUsers');
+    
+    if (savedUser) {
+        currentUser = JSON.parse(savedUser);
+    }
+    
+    if (savedUsers) {
+        users = JSON.parse(savedUsers);
+    }
+}
+
+/**
+ * Load user-specific data from localStorage
+ */
+function loadUserData() {
+    if (currentUser) {
+        const userKey = `romeo_user_${currentUser.id}`;
+        const savedAddresses = localStorage.getItem(`${userKey}_addresses`);
+        const savedOrders = localStorage.getItem(`${userKey}_orders`);
+        const savedFavorites = localStorage.getItem(`${userKey}_favorites`);
+        
+        if (savedAddresses) userAddresses = JSON.parse(savedAddresses);
+        if (savedOrders) userOrders = JSON.parse(savedOrders);
+        if (savedFavorites) favoriteOrders = JSON.parse(savedFavorites);
+    }
+}
+
+/**
+ * Save user-specific data to localStorage
+ */
+function saveUserData() {
+    if (currentUser) {
+        const userKey = `romeo_user_${currentUser.id}`;
+        localStorage.setItem(`${userKey}_addresses`, JSON.stringify(userAddresses));
+        localStorage.setItem(`${userKey}_orders`, JSON.stringify(userOrders));
+        localStorage.setItem(`${userKey}_favorites`, JSON.stringify(favoriteOrders));
+    }
+}
+
+/**
+ * Update authentication UI based on login state
+ */
+function updateAuthUI() {
+    const loginBtn = document.getElementById('loginBtn');
+    const userProfileDropdown = document.getElementById('userProfileDropdown');
+    const userNameDisplay = document.getElementById('userNameDisplay');
+    
+    if (currentUser) {
+        // User is logged in
+        if (loginBtn) loginBtn.style.display = 'none';
+        if (userProfileDropdown) userProfileDropdown.style.display = 'block';
+        if (userNameDisplay) userNameDisplay.textContent = currentUser.name.split(' ')[0]; // First name
+    } else {
+        // User is not logged in
+        if (loginBtn) loginBtn.style.display = 'block';
+        if (userProfileDropdown) userProfileDropdown.style.display = 'none';
+    }
+}
+
+// ===== AUTHENTICATION FUNCTIONS =====
+
+/**
+ * Initialize form event listeners
  */
 function initializeEventListeners() {
-    // Order Now buttons
-    const orderBtns = document.querySelectorAll('.order-btn');
-    orderBtns.forEach(btn => {
-        btn.addEventListener('click', handleOrderClick);
-    });
-
-    // Main Order Now button in hero section
-    const mainOrderBtn = document.getElementById('orderBtn');
-    if (mainOrderBtn) {
-        mainOrderBtn.addEventListener('click', handleOrderClick);
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            handleLogin();
+        });
     }
-
-    // Contact form submission
-    const contactForm = document.getElementById('contactForm');
+    
+    const signupForm = document.getElementById('signupForm');
+    if (signupForm) {
+        signupForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            handleSignup();
+        });
+    }
+    
+    const passwordResetForm = document.getElementById('passwordResetForm');
+    if (passwordResetForm) {
+        passwordResetForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            handlePasswordReset();
+        });
+    }
+    
+    const contactForm = document.querySelector('form[id="contactForm"]');
     if (contactForm) {
         contactForm.addEventListener('submit', handleFormSubmit);
     }
-
-    // Navigation links for smooth scroll
-    const navLinks = document.querySelectorAll('.navbar-nav a');
-    navLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            // Close mobile menu when a link is clicked
-            const navbarCollapse = document.querySelector('.navbar-collapse');
-            if (navbarCollapse.classList.contains('show')) {
-                const toggleBtn = document.querySelector('.navbar-toggler');
-                toggleBtn.click();
-            }
-        });
-    });
-
-    // Update active nav link on scroll
-    window.addEventListener('scroll', updateActiveNavLink);
 }
 
 /**
- * Handle order button clicks
- * Shows an alert confirming the order action
+ * Handle user login
  */
-function handleOrderClick(e) {
-    e.preventDefault();
+function handleLogin() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const rememberMe = document.getElementById('rememberMe').checked;
     
-    // Get the dish name from the button's data attribute
-    const dishName = this.getAttribute('data-dish') || 'Your Order';
+    if (!email || !password) {
+        alert('âŒ Please enter both email and password.');
+        return;
+    }
     
-    // Show confirmation alert
-    showNotification(`${dishName} has been added to your cart! 🍝`, 'success');
+    // Find user by email
+    const user = users.find(u => u.email === email);
     
-    // Optional: Log the action
-    console.log(`Order placed for: ${dishName}`);
+    if (!user) {
+        alert('âŒ Email not found. Please sign up first.');
+        return;
+    }
+    
+    // Simple password validation (in production, use bcrypt)
+    if (user.password !== password) {
+        alert('âŒ Incorrect password. Please try again.');
+        return;
+    }
+    
+    // Login successful
+    currentUser = {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone
+    };
+    
+    localStorage.setItem('romeoCurrentUser', JSON.stringify(currentUser));
+    localStorage.setItem('romeoUsers', JSON.stringify(users));
+    
+    if (rememberMe) {
+        localStorage.setItem('romeoRememberMe', 'true');
+    }
+    
+    loadUserData();
+    updateAuthUI();
+    
+    // Close modal
+    const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+    if (loginModal) loginModal.hide();
+    
+    alert(`âœ… Welcome back, ${currentUser.name}!`);
+    
+    // Reset form
+    document.getElementById('loginForm').reset();
 }
+
+/**
+ * Handle user signup
+ */
+function handleSignup() {
+    const name = document.getElementById('signupName').value.trim();
+    const email = document.getElementById('signupEmail').value.trim();
+    const phone = document.getElementById('signupPhone').value.trim();
+    const password = document.getElementById('signupPassword').value;
+    const passwordConfirm = document.getElementById('signupPasswordConfirm').value;
+    const agreeTerms = document.getElementById('agreeTerms').checked;
+    
+    // Validation
+    if (!name || !email || !phone || !password || !passwordConfirm) {
+        alert('âŒ Please fill in all fields.');
+        return;
+    }
+    
+    if (password.length < 6) {
+        alert('âŒ Password must be at least 6 characters long.');
+        return;
+    }
+    
+    if (password !== passwordConfirm) {
+        alert('âŒ Passwords do not match.');
+        return;
+    }
+    
+    if (!agreeTerms) {
+        alert('âŒ Please agree to the Terms and Conditions.');
+        return;
+    }
+    
+    // Check if email already exists
+    if (users.find(u => u.email === email)) {
+        alert('âŒ Email already registered. Please login or use a different email.');
+        return;
+    }
+    
+    // Create new user
+    const newUser = {
+        id: Date.now().toString(),
+        name: name,
+        email: email,
+        phone: phone,
+        password: password, // In production, hash this!
+        createdAt: new Date().toISOString()
+    };
+    
+    users.push(newUser);
+    localStorage.setItem('romeoUsers', JSON.stringify(users));
+    
+    // Auto-login after signup
+    currentUser = {
+        id: newUser.id,
+        name: newUser.name,
+        email: newUser.email,
+        phone: newUser.phone
+    };
+    
+    localStorage.setItem('romeoCurrentUser', JSON.stringify(currentUser));
+    loadUserData();
+    updateAuthUI();
+    
+    // Close modal
+    const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+    if (loginModal) loginModal.hide();
+    
+    alert(`âœ… Account created successfully, ${name}! Welcome to ROMEO Restaurant!`);
+    
+    // Reset form
+    document.getElementById('signupForm').reset();
+}
+
+/**
+ * Handle password reset
+ */
+function handlePasswordReset() {
+    const resetEmail = document.getElementById('resetEmail').value.trim();
+    
+    if (!resetEmail) {
+        alert('âŒ Please enter your email address.');
+        return;
+    }
+    
+    const user = users.find(u => u.email === resetEmail);
+    
+    if (!user) {
+        alert('âŒ Email not found in our system.');
+        return;
+    }
+    
+    // In production, send reset link via email
+    alert(`âœ… Password reset link has been sent to ${resetEmail}. Please check your email.`);
+    document.getElementById('passwordResetForm').reset();
+}
+
+/**
+ * Handle OAuth login (Google)
+ */
+function loginWithGoogle() {
+    // In production, integrate with Google OAuth
+    alert('ðŸ” Google login is coming soon! For now, please use email/password registration.');
+}
+
+/**
+ * Handle OAuth login (Facebook)
+ */
+function loginWithFacebook() {
+    // In production, integrate with Facebook OAuth
+    alert('ðŸ” Facebook login is coming soon! For now, please use email/password registration.');
+}
+
+/**
+ * Handle logout
+ */
+function handleLogout() {
+    if (confirm('Are you sure you want to logout?')) {
+        currentUser = null;
+        localStorage.removeItem('romeoCurrentUser');
+        localStorage.removeItem('romeoRememberMe');
+        updateAuthUI();
+        alert('âœ… You have been logged out successfully.');
+    }
+}
+
+// ===== USER PROFILE FUNCTIONS =====
+
+/**
+ * Show user profile page
+ */
+function showProfile() {
+    if (!currentUser) {
+        alert('Please login first.');
+        return;
+    }
+    
+    const profileSection = document.getElementById('profilePage');
+    if (profileSection) {
+        profileSection.style.display = 'block';
+        document.getElementById('profileName').textContent = currentUser.name;
+        document.getElementById('profileEmail').textContent = currentUser.email;
+        document.getElementById('profilePhone').textContent = currentUser.phone;
+    }
+}
+
+/**
+ * Show order history
+ */
+function showOrderHistory() {
+    if (!currentUser) {
+        alert('Please login first.');
+        return;
+    }
+    
+    const orderHistorySection = document.getElementById('orderHistoryPage');
+    if (orderHistorySection) {
+        orderHistorySection.style.display = 'block';
+        renderOrderHistory();
+    }
+}
+
+/**
+ * Render order history
+ */
+function renderOrderHistory() {
+    const orderContainer = document.getElementById('orderHistoryContainer');
+    if (!orderContainer) return;
+    
+    if (userOrders.length === 0) {
+        orderContainer.innerHTML = '<p class="text-center text-muted">No orders yet. Start ordering now!</p>';
+        return;
+    }
+    
+    orderContainer.innerHTML = '';
+    userOrders.forEach((order, index) => {
+        const orderDate = new Date(order.date).toLocaleDateString();
+        const orderHTML = `
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="card-title">Order #${index + 1}</h6>
+                            <p class="text-muted mb-1">Date: ${orderDate}</p>
+                            <p class="text-muted mb-1">Items: ${order.items.length}</p>
+                        </div>
+                        <div class="col-md-3">
+                            <p class="fw-bold">Total: $${order.total.toFixed(2)}</p>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-sm btn-primary" onclick="toggleFavoriteOrder(${index})">
+                                <i class="fas fa-heart"></i> Favorite
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        orderContainer.innerHTML += orderHTML;
+    });
+}
+
+/**
+ * Add order to history
+ */
+function addOrderToHistory(orderData) {
+    const order = {
+        date: new Date().toISOString(),
+        items: orderData.items,
+        total: orderData.total,
+        address: orderData.address
+    };
+    
+    userOrders.push(order);
+    saveUserData();
+}
+
+/**
+ * Toggle favorite order
+ */
+function toggleFavoriteOrder(orderIndex) {
+    const order = userOrders[orderIndex];
+    const isFavorited = favoriteOrders.some(fav => 
+        fav.date === order.date && fav.total === order.total
+    );
+    
+    if (isFavorited) {
+        favoriteOrders = favoriteOrders.filter(fav => 
+            !(fav.date === order.date && fav.total === order.total)
+        );
+        alert('âŒ Removed from favorites');
+    } else {
+        favoriteOrders.push(order);
+        alert('â¤ï¸ Added to favorites');
+    }
+    
+    saveUserData();
+    renderOrderHistory();
+}
+
+// ===== ADDRESS MANAGEMENT =====
+
+/**
+ * Show addresses page
+ */
+function showAddresses() {
+    if (!currentUser) {
+        alert('Please login first.');
+        return;
+    }
+    
+    const addressesSection = document.getElementById('addressesPage');
+    if (addressesSection) {
+        addressesSection.style.display = 'block';
+        renderAddresses();
+    }
+}
+
+/**
+ * Render saved addresses
+ */
+function renderAddresses() {
+    const addressContainer = document.getElementById('addressesContainer');
+    if (!addressContainer) return;
+    
+    addressContainer.innerHTML = '';
+    
+    if (userAddresses.length === 0) {
+        addressContainer.innerHTML = '<p class="text-muted">No saved addresses. Add one below.</p>';
+    } else {
+        userAddresses.forEach((address, index) => {
+            const addressHTML = `
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <h6 class="card-title">${address.label}</h6>
+                                <p class="mb-0">${address.street}</p>
+                                <p class="mb-0">${address.city}, ${address.state} ${address.zip}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <button class="btn btn-sm btn-warning me-2" onclick="editAddress(${index})">Edit</button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteAddress(${index})">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            addressContainer.innerHTML += addressHTML;
+        });
+    }
+}
+
+/**
+ * Add new address
+ */
+function addAddress() {
+    const street = prompt('Enter street address:');
+    if (!street) return;
+    
+    const city = prompt('Enter city:');
+    if (!city) return;
+    
+    const state = prompt('Enter state:');
+    if (!state) return;
+    
+    const zip = prompt('Enter ZIP code:');
+    if (!zip) return;
+    
+    const label = prompt('Label (e.g., Home, Office):');
+    if (!label) return;
+    
+    const newAddress = {
+        label: label,
+        street: street,
+        city: city,
+        state: state,
+        zip: zip,
+        default: userAddresses.length === 0
+    };
+    
+    userAddresses.push(newAddress);
+    saveUserData();
+    renderAddresses();
+    alert('âœ… Address added successfully!');
+}
+
+/**
+ * Edit address
+ */
+function editAddress(index) {
+    const address = userAddresses[index];
+    const newLabel = prompt('Label:', address.label);
+    if (!newLabel) return;
+    
+    const newStreet = prompt('Street:', address.street);
+    if (!newStreet) return;
+    
+    userAddresses[index] = {
+        ...address,
+        label: newLabel,
+        street: newStreet
+    };
+    
+    saveUserData();
+    renderAddresses();
+    alert('âœ… Address updated successfully!');
+}
+
+/**
+ * Delete address
+ */
+function deleteAddress(index) {
+    if (confirm('Are you sure you want to delete this address?')) {
+        userAddresses.splice(index, 1);
+        saveUserData();
+        renderAddresses();
+        alert('âœ… Address deleted successfully!');
+    }
+}
+
+// ===== SHOPPING CART FUNCTIONS =====
+
+/**
+ * Load cart from localStorage
+ */
+function loadCart() {
+    const savedCart = localStorage.getItem('romeoCart');
+    if (savedCart) {
+        cart = JSON.parse(savedCart);
+        updateCartUI();
+    }
+}
+
+/**
+ * Save cart to localStorage
+ */
+function saveCart() {
+    localStorage.setItem('romeoCart', JSON.stringify(cart));
+    updateCartUI();
+}
+
+/**
+ * Add item to cart
+ */
+function addToCart(name, price) {
+    const quantity = parseInt(prompt(`How many ${name} would you like?`, '1'));
+    
+    if (isNaN(quantity) || quantity < 1) {
+        alert('âŒ Please enter a valid quantity.');
+        return;
+    }
+    
+    const existingItem = cart.find(item => item.name === name);
+    
+    if (existingItem) {
+        existingItem.quantity += quantity;
+    } else {
+        cart.push({
+            name: name,
+            price: price,
+            quantity: quantity
+        });
+    }
+    
+    saveCart();
+    alert(`âœ… ${quantity} ${name}(s) added to cart!`);
+}
+
+/**
+ * Show shopping cart modal
+ */
+function showCart() {
+    const cartModal = new bootstrap.Modal(document.getElementById('cartModal'));
+    renderCartItems();
+    cartModal.show();
+}
+
+/**
+ * Render cart items
+ */
+function renderCartItems() {
+    const cartItemsContainer = document.getElementById('cartItemsContainer');
+    const cartTotal = document.getElementById('cartTotal');
+    
+    if (!cartItemsContainer) return;
+    
+    cartItemsContainer.innerHTML = '';
+    let total = 0;
+    
+    if (cart.length === 0) {
+        cartItemsContainer.innerHTML = '<p class="text-center text-muted">Your cart is empty</p>';
+        cartTotal.textContent = '$0.00';
+        return;
+    }
+    
+    cart.forEach((item, index) => {
+        const itemTotal = item.price * item.quantity;
+        total += itemTotal;
+        
+        const cartItemHTML = `
+            <div class="cart-item mb-3 pb-3 border-bottom">
+                <div class="row align-items-center">
+                    <div class="col-md-4">
+                        <p class="mb-0 fw-bold">${item.name}</p>
+                        <p class="mb-0 text-muted small">$${item.price.toFixed(2)} each</p>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="btn-group btn-group-sm" role="group">
+                            <button class="btn btn-outline-secondary" onclick="decreaseQuantity(${index})">âˆ’</button>
+                            <button class="btn btn-outline-secondary" disabled>${item.quantity}</button>
+                            <button class="btn btn-outline-secondary" onclick="increaseQuantity(${index})">+</button>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <p class="mb-0 fw-bold text-danger">$${itemTotal.toFixed(2)}</p>
+                    </div>
+                    <div class="col-md-1">
+                        <button class="btn btn-sm btn-outline-danger" onclick="removeFromCart(${index})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        cartItemsContainer.innerHTML += cartItemHTML;
+    });
+    
+    cartTotal.textContent = `$${total.toFixed(2)}`;
+}
+
+/**
+ * Increase item quantity
+ */
+function increaseQuantity(index) {
+    cart[index].quantity += 1;
+    saveCart();
+    renderCartItems();
+}
+
+/**
+ * Decrease item quantity
+ */
+function decreaseQuantity(index) {
+    if (cart[index].quantity > 1) {
+        cart[index].quantity -= 1;
+    } else {
+        cart.splice(index, 1);
+    }
+    saveCart();
+    renderCartItems();
+}
+
+/**
+ * Remove item from cart
+ */
+function removeFromCart(index) {
+    cart.splice(index, 1);
+    saveCart();
+    renderCartItems();
+}
+
+/**
+ * Update cart UI (badge count)
+ */
+function updateCartUI() {
+    const cartBtn = document.getElementById('cartBtn');
+    const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+    
+    if (cartBtn) {
+        cartBtn.textContent = totalItems;
+    }
+}
+
+/**
+ * Proceed to checkout
+ */
+function proceedToCheckout() {
+    if (!currentUser) {
+        alert('Please login to proceed with checkout.');
+        const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+        loginModal.show();
+        return;
+    }
+    
+    if (cart.length === 0) {
+        alert('Your cart is empty.');
+        return;
+    }
+    
+    // Get default address or first address
+    let deliveryAddress = userAddresses.find(a => a.default) || userAddresses[0];
+    
+    if (!deliveryAddress) {
+        alert('Please add a delivery address first.');
+        showAddresses();
+        return;
+    }
+    
+    // Calculate total
+    const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    
+    // Create order
+    const orderData = {
+        items: [...cart],
+        total: total,
+        address: deliveryAddress
+    };
+    
+    addOrderToHistory(orderData);
+    
+    // Clear cart
+    cart = [];
+    saveCart();
+    
+    // Close modal
+    const cartModal = bootstrap.Modal.getInstance(document.getElementById('cartModal'));
+    if (cartModal) cartModal.hide();
+    
+    alert(`âœ… Order placed successfully!\n\nTotal: $${total.toFixed(2)}\nDelivery to: ${deliveryAddress.street}, ${deliveryAddress.city}\n\nEstimated delivery: 30-45 minutes`);
+}
+
+// ===== CONTACT FORM =====
 
 /**
  * Handle contact form submission
- * Validates form data and shows confirmation message
  */
 function handleFormSubmit(e) {
     e.preventDefault();
     
-    // Get form data
-    const name = document.getElementById('name').value.trim();
-    const email = document.getElementById('email').value.trim();
-    const phone = document.getElementById('phone').value.trim();
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const phone = document.getElementById('phone').value;
     const date = document.getElementById('date').value;
-    const message = document.getElementById('message').value.trim();
+    const message = document.getElementById('message').value;
     
-    // Validate form
-    if (!validateForm(name, email, message)) {
-        showNotification('Please fill in all required fields correctly.', 'error');
+    // Validation
+    if (!name || !email || !phone || !date || !message) {
+        alert('âŒ Please fill in all fields.');
         return;
     }
     
-    // Show success message
-    showNotification(
-        `Thank you, ${name}! We've received your message and will contact you soon. 📧`,
-        'success'
-    );
-    
-    // Log form data (in a real application, this would be sent to a server)
-    console.log({
-        name: name,
-        email: email,
-        phone: phone,
-        date: date,
-        message: message,
-        timestamp: new Date().toISOString()
-    });
+    // In production, send this data to backend
+    alert(`âœ… Thank you, ${name}! We've received your reservation request.\nWe'll confirm your booking at ${email} shortly.`);
     
     // Reset form
     this.reset();
-    
-    // Optional: Scroll to top
-    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-/**
- * Validate contact form data
- * @param {string} name - Customer name
- * @param {string} email - Customer email
- * @param {string} message - Customer message
- * @returns {boolean} - True if form is valid
- */
-function validateForm(name, email, message) {
-    // Check if required fields are filled
-    if (!name || !email || !message) {
-        return false;
-    }
-    
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-        return false;
-    }
-    
-    // Check minimum message length
-    if (message.length < 10) {
-        return false;
-    }
-    
-    return true;
-}
+// ===== NAVIGATION =====
 
 /**
- * Show notification message to user
- * Creates a temporary alert that displays at the top of the page
- * @param {string} message - The message to display
- * @param {string} type - Type of notification: 'success', 'error', 'info'
- */
-function showNotification(message, type = 'info') {
-    // Create notification element
-    const notification = document.createElement('div');
-    notification.className = `alert alert-${type === 'error' ? 'danger' : type} alert-dismissible fade show`;
-    notification.setAttribute('role', 'alert');
-    notification.style.position = 'fixed';
-    notification.style.top = '80px';
-    notification.style.right = '20px';
-    notification.style.zIndex = '9999';
-    notification.style.maxWidth = '400px';
-    notification.style.animation = 'slideInRight 0.3s ease';
-    
-    // Set notification content
-    notification.innerHTML = `
-        ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    `;
-    
-    // Add to page
-    document.body.appendChild(notification);
-    
-    // Auto-remove after 5 seconds
-    setTimeout(() => {
-        notification.remove();
-    }, 5000);
-}
-
-/**
- * Update active navigation link based on scroll position
- * Highlights the current section in the navigation menu
+ * Update active navigation link on scroll
  */
 function updateActiveNavLink() {
-    const sections = document.querySelectorAll('section[id]');
-    const navLinks = document.querySelectorAll('.navbar-nav a[href^="#"]');
-    
-    let current = '';
+    const sections = ['home', 'menu', 'about', 'contact'];
+    let currentSection = 'home';
     
     sections.forEach(section => {
-        const sectionTop = section.offsetTop;
-        const sectionHeight = section.clientHeight;
-        
-        if (window.pageYOffset >= sectionTop - 200) {
-            current = section.getAttribute('id');
+        const element = document.getElementById(section);
+        if (element) {
+            const rect = element.getBoundingClientRect();
+            if (rect.top <= 100) {
+                currentSection = section;
+            }
         }
     });
     
-    navLinks.forEach(link => {
+    // Update nav links
+    document.querySelectorAll('.navbar-nav a').forEach(link => {
         link.classList.remove('active');
-        if (link.getAttribute('href') === `#${current}`) {
+        if (link.getAttribute('href') === `#${currentSection}`) {
             link.classList.add('active');
         }
     });
 }
 
-/**
- * Add smooth scroll behavior for anchor links
- * This is handled by CSS scroll-behavior: smooth, but this provides fallback
- */
+// ===== SMOOTH SCROLLING =====
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function(e) {
-        const href = this.getAttribute('href');
-        
-        // Skip if href is just '#'
-        if (href === '#') return;
-        
         e.preventDefault();
-        
-        const target = document.querySelector(href);
+        const target = document.querySelector(this.getAttribute('href'));
         if (target) {
             target.scrollIntoView({
                 behavior: 'smooth',
@@ -227,192 +808,5 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-/**
- * Add hover effects to menu cards
- * Enhances visual feedback on interaction
- */
-document.querySelectorAll('.menu-card').forEach(card => {
-    card.addEventListener('mouseenter', function() {
-        this.style.transform = 'translateY(-10px)';
-    });
-    
-    card.addEventListener('mouseleave', function() {
-        this.style.transform = 'translateY(0)';
-    });
-});
-
-/**
- * Add animation to elements when they come into view
- * Provides scroll animation effects
- */
-function observeElements() {
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
-            }
-        });
-    }, {
-        threshold: 0.1
-    });
-    
-    // Observe menu cards
-    document.querySelectorAll('.menu-card').forEach(card => {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(20px)';
-        card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        observer.observe(card);
-    });
-}
-
-// Initialize element observations when DOM is ready
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', observeElements);
-} else {
-    observeElements();
-}
-
-/**
- * Add keyboard navigation support
- * Allow users to navigate using keyboard
- */
-document.addEventListener('keydown', function(e) {
-    // Close mobile menu on Escape key
-    if (e.key === 'Escape') {
-        const navbarCollapse = document.querySelector('.navbar-collapse');
-        if (navbarCollapse.classList.contains('show')) {
-            const toggleBtn = document.querySelector('.navbar-toggler');
-            toggleBtn.click();
-        }
-    }
-});
-
-/**
- * Enhance accessibility
- * Add ARIA labels and roles where needed
- */
-function enhanceAccessibility() {
-    // Add role to main sections
-    const sections = document.querySelectorAll('section');
-    sections.forEach((section, index) => {
-        if (!section.getAttribute('role')) {
-            section.setAttribute('role', 'region');
-        }
-    });
-    
-    // Add aria-labels to buttons without text
-    const buttons = document.querySelectorAll('button');
-    buttons.forEach(button => {
-        if (!button.getAttribute('aria-label') && !button.textContent.trim()) {
-            button.setAttribute('aria-label', 'Button');
-        }
-    });
-}
-
-// Initialize accessibility features
-enhanceAccessibility();
-
-/**
- * Log page analytics (optional)
- * Track user interactions for analytics
- */
-function trackEvent(eventName, eventData = {}) {
-    console.log(`Event: ${eventName}`, eventData);
-    
-    // In a real application, this would send data to an analytics service
-    // Example: Google Analytics, Mixpanel, etc.
-}
-
-// Track page load
-trackEvent('page_load', {
-    timestamp: new Date().toISOString(),
-    url: window.location.href
-});
-
-// Track section views
-document.querySelectorAll('section[id]').forEach(section => {
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                trackEvent('section_view', {
-                    section: entry.target.id,
-                    timestamp: new Date().toISOString()
-                });
-            }
-        });
-    });
-    
-    observer.observe(section);
-});
-
-/**
- * Add loading animation for images
- * Shows a loading state while images are being loaded
- */
-document.querySelectorAll('img').forEach(img => {
-    img.addEventListener('load', function() {
-        this.style.opacity = '1';
-    });
-    
-    img.style.opacity = '0.7';
-    img.style.transition = 'opacity 0.3s ease';
-});
-
-/**
- * Responsive menu toggle
- * Ensure mobile menu works properly
- */
-const navbarToggler = document.querySelector('.navbar-toggler');
-if (navbarToggler) {
-    navbarToggler.addEventListener('click', function() {
-        const isExpanded = this.getAttribute('aria-expanded') === 'true';
-        this.setAttribute('aria-expanded', !isExpanded);
-    });
-}
-
-/**
- * Add form input validation feedback
- * Provide real-time validation feedback
- */
-const formInputs = document.querySelectorAll('.form-control');
-formInputs.forEach(input => {
-    input.addEventListener('blur', function() {
-        validateInput(this);
-    });
-    
-    input.addEventListener('input', function() {
-        if (this.classList.contains('is-invalid')) {
-            validateInput(this);
-        }
-    });
-});
-
-/**
- * Validate individual form input
- * @param {HTMLElement} input - The input element to validate
- */
-function validateInput(input) {
-    let isValid = true;
-    
-    if (input.id === 'email') {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        isValid = emailRegex.test(input.value);
-    } else if (input.id === 'name' || input.id === 'message') {
-        isValid = input.value.trim().length > 0;
-    } else if (input.id === 'phone') {
-        // Phone is optional, but if filled, should be valid
-        isValid = input.value === '' || /^[\d\s\-\+\(\)]+$/.test(input.value);
-    }
-    
-    if (isValid) {
-        input.classList.remove('is-invalid');
-        input.classList.add('is-valid');
-    } else {
-        input.classList.remove('is-valid');
-        input.classList.add('is-invalid');
-    }
-}
-
-// Log script initialization
-console.log('ROMEO Restaurant website initialized successfully! 🍽️');
+// Update active nav link on scroll
+window.addEventListener('scroll', updateActiveNavLink);
