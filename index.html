@@ -19,8 +19,9 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="styles.css">
     
-    <!-- Icon -->
-    <link href="images/favicon1.ico" rel="icon">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/file_000000001d9c720aba82f24343c2dd19.png">
     
 </head>
 
@@ -56,6 +57,34 @@
                         <a class="nav-link" href="#contact">Contact</a>
                     </li>
                 </ul>
+
+ <!-- Shopping Cart Icon in Navigation -->
+                <button class="btn btn-outline-light ms-2 position-relative" id="cartBtn" data-bs-toggle="modal" data-bs-target="#cartModal">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="cartCount" style="display: none;">
+                        0
+                    </span>
+                </button>
+
+                 <!-- User Profile Dropdown (Logged In) -->
+                <div class="dropdown ms-2" id="userProfileDropdown" style="display: none;">
+                    <button class="btn btn-outline-light dropdown-toggle" type="button" id="userDropdownBtn" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user-circle"></i> <span id="userNameDisplay">User</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdownBtn">
+                        <li><a class="dropdown-item" href="#profile" onclick="showProfilePage()"><i class="fas fa-user"></i> My Profile</a></li>
+                        <li><a class="dropdown-item" href="#orders" onclick="showOrderHistory()"><i class="fas fa-history"></i> Order History</a></li>
+                        <li><a class="dropdown-item" href="#addresses" onclick="showAddresses()"><i class="fas fa-map-marker-alt"></i> Saved Addresses</a></li>
+                        <li><a class="dropdown-item" href="#favorites" onclick="showFavorites()"><i class="fas fa-heart"></i> Favorite Orders</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                    </ul>
+                </div>
+                <!-- Login Button (Not Logged In) -->
+                <button class="btn btn-danger ms-2" id="loginBtn" data-bs-toggle="modal" data-bs-target="#loginModal">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+                
                 <!-- Book Table Button in Navigation -->
                 <a href="#contact" class="btn btn-danger ms-2">Book Table</a>
             </div>
@@ -178,7 +207,7 @@
                         </div>
                         <div class="menu-card-body">
                             <h5 class="menu-card-title">Italian Wine</h5>
-                            <p class="menu-card-price">$4.99</p>
+                            <p class="menu-card-price">$4.99+</p>
                             <p class="menu-card-description">Selection of fine Italian wines from Tuscany and beyond</p>
                             <button class="btn btn-danger w-100 order-btn" data-dish="Italian Wine">Order Now</button>
                         </div>
@@ -322,6 +351,264 @@
         </div>
     </section>
 
+
+    <!-- ===== LOGIN MODAL ===== -->
+    <!-- Modal for user login -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="loginModalLabel">
+                        <i class="fas fa-sign-in-alt"></i> Login to Your Account
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Login Tab -->
+                    <ul class="nav nav-tabs mb-3" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="loginTab" data-bs-toggle="tab" data-bs-target="#loginContent" type="button" role="tab" aria-controls="loginContent" aria-selected="true">Login</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="signupTab" data-bs-toggle="tab" data-bs-target="#signupContent" type="button" role="tab" aria-controls="signupContent" aria-selected="false">Sign Up</button>
+                        </li>
+                    </ul>
+                    
+                    <!-- Login Form -->
+                    <div class="tab-content">
+                        <div class="tab-pane fade show active" id="loginContent" role="tabpanel" aria-labelledby="loginTab">
+                            <form id="loginForm">
+                                <div class="mb-3">
+                                    <label for="loginEmail" class="form-label">Email Address</label>
+                                    <input type="email" class="form-control" id="loginEmail" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="loginPassword" class="form-label">Password</label>
+                                    <input type="password" class="form-control" id="loginPassword" required>
+                                </div>
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="rememberMe">
+                                    <label class="form-check-label" for="rememberMe">Remember me</label>
+                                </div>
+                                <button type="submit" class="btn btn-danger w-100 mb-3">Login</button>
+                                <a href="#" class="d-block text-center text-muted" onclick="showPasswordReset()">Forgot Password?</a>
+                            </form>
+                            
+                            <!-- OAuth Options -->
+                            <div class="mt-4">
+                                <p class="text-center text-muted mb-3">Or continue with</p>
+                                <div class="d-grid gap-2">
+                                    <button type="button" class="btn btn-outline-primary" onclick="loginWithGoogle()">
+                                        <i class="fab fa-google"></i> Login with Google
+                                    </button>
+                                    <button type="button" class="btn btn-outline-info" onclick="loginWithFacebook()">
+                                        <i class="fab fa-facebook"></i> Login with Facebook
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Signup Form -->
+                        <div class="tab-pane fade" id="signupContent" role="tabpanel" aria-labelledby="signupTab">
+                            <form id="signupForm">
+                                <div class="mb-3">
+                                    <label for="signupName" class="form-label">Full Name</label>
+                                    <input type="text" class="form-control" id="signupName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="signupEmail" class="form-label">Email Address</label>
+                                    <input type="email" class="form-control" id="signupEmail" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="signupPhone" class="form-label">Phone Number</label>
+                                    <input type="tel" class="form-control" id="signupPhone" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="signupPassword" class="form-label">Password</label>
+                                    <input type="password" class="form-control" id="signupPassword" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="signupPasswordConfirm" class="form-label">Confirm Password</label>
+                                    <input type="password" class="form-control" id="signupPasswordConfirm" required>
+                                </div>
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="agreeTerms" required>
+                                    <label class="form-check-label" for="agreeTerms">I agree to the Terms and Conditions</label>
+                                </div>
+                                <button type="submit" class="btn btn-danger w-100">Create Account</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== PASSWORD RESET MODAL ===== -->
+    <!-- Modal for password reset -->
+    <div class="modal fade" id="passwordResetModal" tabindex="-1" aria-labelledby="passwordResetLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="passwordResetLabel">
+                        <i class="fas fa-key"></i> Reset Password
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="passwordResetForm">
+                        <div class="mb-3">
+                            <label for="resetEmail" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="resetEmail" required>
+                        </div>
+                        <p class="text-muted small">We'll send you a link to reset your password.</p>
+                        <button type="submit" class="btn btn-danger w-100">Send Reset Link</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SHOPPING CART MODAL ===== -->
+    <!-- Modal for displaying shopping cart items -->
+    <div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="cartModalLabel">
+                        <i class="fas fa-shopping-cart"></i> Shopping Cart
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="cartItems" class="cart-items-container">
+                        <!-- Cart items will be dynamically inserted here -->
+                    </div>
+                    <div id="emptyCartMessage" class="text-center py-5">
+                        <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">Your cart is empty. Start adding items!</p>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <div class="w-100">
+                        <div class="row align-items-center mb-3">
+                            <div class="col-6">
+                                <h6 class="mb-0">Total:</h6>
+                            </div>
+                            <div class="col-6 text-end">
+                                <h5 class="mb-0 text-danger" id="cartTotal">$0.00</h5>
+                            </div>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal">Continue Shopping</button>
+                            </div>
+                            <div class="col-6">
+                                <button type="button" class="btn btn-danger w-100" id="checkoutBtn" onclick="proceedToCheckout()">
+                                    <i class="fas fa-credit-card"></i> Checkout
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== PROFILE PAGE ===== -->
+    <!-- User profile page section -->
+    <section id="profile" class="profile-section py-5" style="display: none; margin-top: 80px;">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 mx-auto">
+                    <div class="card shadow-lg">
+                        <div class="card-header bg-danger text-white">
+                            <h4 class="mb-0"><i class="fas fa-user"></i> My Profile</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-4">
+                                <div class="col-md-4 text-center">
+                                    <div class="profile-avatar mb-3">
+                                        <i class="fas fa-user-circle fa-5x text-danger"></i>
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Full Name</label>
+                                        <p id="profileName" class="form-control-plaintext"></p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Email Address</label>
+                                        <p id="profileEmail" class="form-control-plaintext"></p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Phone Number</label>
+                                        <p id="profilePhone" class="form-control-plaintext"></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <button class="btn btn-primary" onclick="editProfile()"><i class="fas fa-edit"></i> Edit Profile</button>
+                            <button class="btn btn-warning" onclick="changePassword()"><i class="fas fa-key"></i> Change Password</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== ORDER HISTORY PAGE ===== -->
+    <!-- User order history section -->
+    <section id="orders" class="orders-section py-5" style="display: none; margin-top: 80px;">
+        <div class="container">
+            <h2 class="mb-4"><i class="fas fa-history"></i> Order History</h2>
+            <div id="orderHistoryContainer" class="row g-4">
+                <!-- Orders will be dynamically inserted here -->
+            </div>
+            <div id="noOrdersMessage" class="text-center py-5">
+                <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                <p class="text-muted">No orders yet. Start ordering from our menu!</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== SAVED ADDRESSES PAGE ===== -->
+    <!-- User saved addresses section -->
+    <section id="addresses" class="addresses-section py-5" style="display: none; margin-top: 80px;">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 mx-auto">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2><i class="fas fa-map-marker-alt"></i> Saved Addresses</h2>
+                        <button class="btn btn-danger" onclick="addNewAddress()"><i class="fas fa-plus"></i> Add Address</button>
+                    </div>
+                    <div id="addressesContainer" class="row g-3">
+                        <!-- Addresses will be dynamically inserted here -->
+                    </div>
+                    <div id="noAddressesMessage" class="text-center py-5">
+                        <i class="fas fa-map fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">No saved addresses yet.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FAVORITE ORDERS PAGE ===== -->
+    <!-- User favorite orders section -->
+    <section id="favorites" class="favorites-section py-5" style="display: none; margin-top: 80px;">
+        <div class="container">
+            <h2 class="mb-4"><i class="fas fa-heart"></i> Favorite Orders</h2>
+            <div id="favoritesContainer" class="row g-4">
+                <!-- Favorite orders will be dynamically inserted here -->
+            </div>
+            <div id="noFavoritesMessage" class="text-center py-5">
+                <i class="fas fa-heart fa-3x text-muted mb-3"></i>
+                <p class="text-muted">No favorite orders yet. Mark orders as favorites to see them here!</p>
+            </div>
+        </div>
+    </section>
+    
     <!-- ===== FOOTER ===== -->
     <!-- Footer with copyright and links -->
     <footer class="footer bg-dark text-light py-4">
