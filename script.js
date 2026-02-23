@@ -4,6 +4,14 @@
  * including smooth scrolling, form validation, button interactions, and animations
  */
 
+// ===== GLOBAL STATE =====
+let currentUser = null;
+let users = []; // Database of users (in localStorage)
+let cart = [];
+let userAddresses = [];
+let userOrders = [];
+let favoriteOrders = [];
+
 // ===== DOCUMENT READY =====
 document.addEventListener('DOMContentLoaded', function() {
     initializeEventListeners();
