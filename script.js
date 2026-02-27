@@ -1,109 +1,153 @@
-/*
- * ===== ROMEO RESTAURANT - COMPLETE JAVASCRIPT INTERACTIONS =====
- * This file handles all JavaScript interactions for the restaurant website
- * including OAuth authentication, user profiles, shopping cart, order history, addresses, and favorites
- */
+// ===============================
+// ROMEO RESTAURANT CART SYSTEM
+// ===============================
 
-// ===== GLOBAL STATE =====
-let currentUser = null;
-let users = []; // Database of users (in localStorage)
 let cart = [];
-let userAddresses = [];
-let userOrders = [];
-let favoriteOrders = [];
 
-// ===== INITIALIZATION =====
-document.addEventListener('DOMContentLoaded', function() {
-    loadAuthState();
-    loadCart();
-    loadUserData();
-    initializeEventListeners();
-    updateActiveNavLink();
-    updateAuthUI();
+// Get all order buttons
+const orderButtons = document.querySelectorAll(".order-btn");
+const cartItemsContainer = document.getElementById("cartItems");
+const cartCount = document.getElementById("cartCount");
+const cartTotal = document.getElementById("cartTotal");
+const emptyCartMessage = document.getElementById("emptyCartMessage");
+
+// ===============================
+// ADD ITEM TO CART
+// ===============================
+orderButtons.forEach(button => {
+    button.addEventListener("click", function () {
+
+        const dishName = this.dataset.dish;
+        const priceText = this.parentElement.querySelector(".menu-card-price").innerText;
+        const price = parseFloat(priceText.replace("$", ""));
+
+        const existingItem = cart.find(item => item.name === dishName);
+
+        if (existingItem) {
+            existingItem.quantity++;
+        } else {
+            cart.push({
+                name: dishName,
+                price: price,
+                quantity: 1
+            });
+        }
+
+        updateCart();
+    });
 });
 
-/**
- * Load authentication state from localStorage
- */
-function loadAuthState() {
-    const savedUser = localStorage.getItem('romeoCurrentUser');
-    const savedUsers = localStorage.getItem('romeoUsers');
-    
-    if (savedUser) {
-        currentUser = JSON.parse(savedUser);
+// ===============================
+// UPDATE CART DISPLAY
+// ===============================
+function updateCart() {
+    cartItemsContainer.innerHTML = "";
+
+    if (cart.length === 0) {
+        emptyCartMessage.style.display = "block";
+        cartCount.style.display = "none";
+        cartTotal.innerText = "$0.00";
+        return;
     }
-    
-    if (savedUsers) {
-        users = JSON.parse(savedUsers);
-    }
+
+    emptyCartMessage.style.display = "none";
+
+    let total = 0;
+    let totalItems = 0;
+
+    cart.forEach((item, index) => {
+        total += item.price * item.quantity;
+        totalItems += item.quantity;
+
+        const cartItem = document.createElement("div");
+        cartItem.classList.add("d-flex", "justify-content-between", "align-items-center", "mb-3");
+
+        cartItem.innerHTML = `
+            <div>
+                <h6>${item.name}</h6>
+                <small>$${item.price.toFixed(2)} x ${item.quantity}</small>
+            </div>
+            <div>
+                <button class="btn btn-sm btn-danger" onclick="removeItem(${index})">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        `;
+
+        cartItemsContainer.appendChild(cartItem);
+    });
+
+    cartTotal.innerText = "$" + total.toFixed(2);
+
+    cartCount.innerText = totalItems;
+    cartCount.style.display = "inline-block";
 }
 
-/**
- * Load user-specific data from localStorage
- */
-function loadUserData() {
-    if (currentUser) {
-        const userKey = `romeo_user_${currentUser.id}`;
-        const savedAddresses = localStorage.getItem(`${userKey}_addresses`);
-        const savedOrders = localStorage.getItem(`${userKey}_orders`);
-        const savedFavorites = localStorage.getItem(`${userKey}_favorites`);
+// ===============================
+// REMOVE ITEM
+// ===============================
+function removeItem(index) {
+    cart.splice(index, 1);
+    updateCart();
+}
+
+// ===============================
+// CHECKOUT FUNCTION (Demo Payment)
+// ===============================
+function proceedToCheckout() {
+
+    if (cart.length === 0) {
+        alert("Your cart is empty!");
+        return;
+    }
+
+    const totalAmount = cartTotal.innerText;
+
+    // Simple Demo Payment Simulation
+    if (confirm("Your total is " + totalAmount + ". Proceed to payment?")) {
         
-        if (savedAddresses) userAddresses = JSON.parse(savedAddresses);
-        if (savedOrders) userOrders = JSON.parse(savedOrders);
-        if (savedFavorites) favoriteOrders = JSON.parse(savedFavorites);
+        alert("Payment Successful! 🎉 Thank you for your order.");
+
+        // Save to Order History (Optional)
+        saveOrderToHistory();
+
+        // Clear cart
+        cart = [];
+        updateCart();
+
+        // Close modal
+        const cartModal = bootstrap.Modal.getInstance(document.getElementById('cartModal'));
+        cartModal.hide();
     }
 }
 
-/**
- * Save user-specific data to localStorage
- */
-function saveUserData() {
-    if (currentUser) {
-        const userKey = `romeo_user_${currentUser.id}`;
-        localStorage.setItem(`${userKey}_addresses`, JSON.stringify(userAddresses));
-        localStorage.setItem(`${userKey}_orders`, JSON.stringify(userOrders));
-        localStorage.setItem(`${userKey}_favorites`, JSON.stringify(favoriteOrders));
-    }
-}
+// ===============================
+// SAVE ORDER TO ORDER HISTORY
+// ===============================
+function saveOrderToHistory() {
 
-/**
- * Update authentication UI based on login state
- */
-function updateAuthUI() {
-    const loginBtn = document.getElementById('loginBtn');
-    const userProfileDropdown = document.getElementById('userProfileDropdown');
-    const userNameDisplay = document.getElementById('userNameDisplay');
-    
-    if (currentUser) {
-        // User is logged in
-        if (loginBtn) loginBtn.style.display = 'none';
-        if (userProfileDropdown) userProfileDropdown.style.display = 'block';
-        if (userNameDisplay) userNameDisplay.textContent = currentUser.name.split(' ')[0]; // First name
-    } else {
-        // User is not logged in
-        if (loginBtn) loginBtn.style.display = 'block';
-        if (userProfileDropdown) userProfileDropdown.style.display = 'none';
-    }
-}
+    const historyContainer = document.getElementById("orderHistoryContainer");
+    const noOrdersMessage = document.getElementById("noOrdersMessage");
 
-// ===== AUTHENTICATION FUNCTIONS =====
+    noOrdersMessage.style.display = "none";
 
-/**
- * Initialize form event listeners
- */
-function initializeEventListeners() {
-    const loginForm = document.getElementById('loginForm');
-    if (loginForm) {
-        loginForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            handleLogin();
-        });
-    }
-    
-    const signupForm = document.getElementById('signupForm');
-    if (signupForm) {
-        signupForm.addEventListener('submit', function(e) {
-            e.preventDefault();
+    const orderCard = document.createElement("div");
+    orderCard.classList.add("col-md-6");
+
+    orderCard.innerHTML = `
+        <div class="card shadow">
+            <div class="card-body">
+                <h5 class="card-title">Order #${Math.floor(Math.random() * 10000)}</h5>
+                <p class="card-text">
+                    ${cart.map(item => `${item.name} (x${item.quantity})`).join("<br>")}
+                </p>
+                <p class="text-danger fw-bold">Total: ${cartTotal.innerText}</p>
+            </div>
+        </div>
+    `;
+
+    historyContainer.appendChild(orderCard);
+}            e.preventDefault();
             handleSignup();
         });
     }
