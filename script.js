@@ -147,6 +147,144 @@ function saveOrderToHistory() {
     `;
 
     historyContainer.appendChild(orderCard);
+}
+
+// ===============================
+// USER AUTHENTICATION SYSTEM
+// ===============================
+
+// Check if user already logged in when page loads
+document.addEventListener("DOMContentLoaded", function () {
+    checkLoginStatus();
+});
+
+// ===============================
+// SIGN UP
+// ===============================
+document.getElementById("signupForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const name = document.getElementById("signupName").value;
+    const email = document.getElementById("signupEmail").value;
+    const phone = document.getElementById("signupPhone").value;
+    const password = document.getElementById("signupPassword").value;
+    const confirmPassword = document.getElementById("signupPasswordConfirm").value;
+
+    if (password !== confirmPassword) {
+        alert("Passwords do not match!");
+        return;
+    }
+
+    const user = {
+        name,
+        email,
+        phone,
+        password
+    };
+
+    localStorage.setItem("romeoUser", JSON.stringify(user));
+    localStorage.setItem("romeoLoggedIn", "true");
+
+    alert("Account created successfully!");
+    location.reload();
+});
+
+// ===============================
+// LOGIN
+// ===============================
+document.getElementById("loginForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const email = document.getElementById("loginEmail").value;
+    const password = document.getElementById("loginPassword").value;
+
+    const savedUser = JSON.parse(localStorage.getItem("romeoUser"));
+
+    if (!savedUser) {
+        alert("No account found. Please sign up.");
+        return;
+    }
+
+    if (email === savedUser.email && password === savedUser.password) {
+        localStorage.setItem("romeoLoggedIn", "true");
+        alert("Login successful!");
+        location.reload();
+    } else {
+        alert("Invalid email or password.");
+    }
+});
+
+// ===============================
+// CHECK LOGIN STATUS
+// ===============================
+function checkLoginStatus() {
+    const isLoggedIn = localStorage.getItem("romeoLoggedIn");
+    const savedUser = JSON.parse(localStorage.getItem("romeoUser"));
+
+    if (isLoggedIn === "true" && savedUser) {
+
+        document.getElementById("loginBtn").style.display = "none";
+        document.getElementById("userProfileDropdown").style.display = "block";
+        document.getElementById("userNameDisplay").innerText = savedUser.name;
+
+        // Fill profile section
+        document.getElementById("profileName").innerText = savedUser.name;
+        document.getElementById("profileEmail").innerText = savedUser.email;
+        document.getElementById("profilePhone").innerText = savedUser.phone;
+    }
+}
+
+// ===============================
+// LOGOUT
+// ===============================
+function logout() {
+    localStorage.removeItem("romeoLoggedIn");
+    alert("Logged out successfully!");
+    location.reload();
+}    // Simple Demo Payment Simulation
+    if (confirm("Your total is " + totalAmount + ". Proceed to payment?")) {
+        
+        alert("Payment Successful! 🎉 Thank you for your order.");
+
+        // Save to Order History (Optional)
+        saveOrderToHistory();
+
+        // Clear cart
+        cart = [];
+        updateCart();
+
+        // Close modal
+        const cartModal = bootstrap.Modal.getInstance(document.getElementById('cartModal'));
+        cartModal.hide();
+    }
+}
+
+// ===============================
+// SAVE ORDER TO ORDER HISTORY
+// ===============================
+function saveOrderToHistory() {
+
+    const historyContainer = document.getElementById("orderHistoryContainer");
+    const noOrdersMessage = document.getElementById("noOrdersMessage");
+
+    noOrdersMessage.style.display = "none";
+
+    const orderCard = document.createElement("div");
+    orderCard.classList.add("col-md-6");
+
+    orderCard.innerHTML = `
+        <div class="card shadow">
+            <div class="card-body">
+                <h5 class="card-title">Order #${Math.floor(Math.random() * 10000)}</h5>
+                <p class="card-text">
+                    ${cart.map(item => `${item.name} (x${item.quantity})`).join("<br>")}
+                </p>
+                <p class="text-danger fw-bold">Total: ${cartTotal.innerText}</p>
+            </div>
+        </div>
+    `;
+
+    historyContainer.appendChild(orderCard);
 }            e.preventDefault();
             handleSignup();
         });
